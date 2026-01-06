@@ -3,13 +3,13 @@
 
 class Axm < Formula
   desc "The official CLI for AgentXM - Agent Experience Management"
-  homepage "https://github.com/agentxm/agentxm"
+  homepage "https://github.com/agentxm/agentxm-internal"
   version "0.1.0-alpha.0"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-darwin-arm64"
+      url "https://github.com/agentxm/agentxm-internal/releases/download/cli-v#{version}/axm-darwin-arm64"
       sha256 "PLACEHOLDER_DARWIN_ARM64"
 
       def install
@@ -18,7 +18,7 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-darwin-x64"
+      url "https://github.com/agentxm/agentxm-internal/releases/download/cli-v#{version}/axm-darwin-x64"
       sha256 "PLACEHOLDER_DARWIN_X64"
 
       def install
@@ -29,7 +29,7 @@ class Axm < Formula
 
   on_linux do
     on_arm do
-      url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-linux-arm64"
+      url "https://github.com/agentxm/agentxm-internal/releases/download/cli-v#{version}/axm-linux-arm64"
       sha256 "PLACEHOLDER_LINUX_ARM64"
 
       def install
@@ -38,7 +38,7 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-linux-x64"
+      url "https://github.com/agentxm/agentxm-internal/releases/download/cli-v#{version}/axm-linux-x64"
       sha256 "PLACEHOLDER_LINUX_X64"
 
       def install
