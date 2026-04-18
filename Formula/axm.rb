@@ -4,13 +4,13 @@
 class Axm < Formula
   desc "The official CLI for AgentXM - Agent Experience Management"
   homepage "https://github.com/agentxm/agentxm"
-  version "0.1.5"
+  version "0.2.0"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-darwin-arm64"
-      sha256 "7c5fc210972887c14e5a8a5d04aa4269219a04fc323cc694b638f190638ec197"
+      sha256 "c6ae9151f6838ebd9875f7b5b5a9d08d4be84a3e55a821d90617bcdae5d551c3"
 
       def install
         bin.install "axm-darwin-arm64" => "axm"
@@ -19,7 +19,7 @@ class Axm < Formula
 
     on_intel do
       url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-darwin-x64"
-      sha256 "cbc417ba5534b5c8eb019e4b357a5afac34b5c3d0d0f56806d16c01e625f9f26"
+      sha256 "feb4d23caa538b7997cb3a183775c300fba6321751fa0a0fa7d5cde4f9b0bf49"
 
       def install
         bin.install "axm-darwin-x64" => "axm"
@@ -30,7 +30,7 @@ class Axm < Formula
   on_linux do
     on_arm do
       url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-linux-arm64"
-      sha256 "f38e292eb30ee13fd178541050fb10ba647d2346d4feb388328ddc6a11571366"
+      sha256 "dd6c8f4cc57d920bbc5afea746b7673a3009b0094f3d9c1919c3e17d60d00348"
 
       def install
         bin.install "axm-linux-arm64" => "axm"
@@ -39,7 +39,7 @@ class Axm < Formula
 
     on_intel do
       url "https://github.com/agentxm/agentxm/releases/download/cli-v#{version}/axm-linux-x64"
-      sha256 "996913ba963f017cbf961a9cb1a448d6e142839e82aa4cf94f1d68b2996bec07"
+      sha256 "7fb69f7dcdb92d2661095fabf62ccbd2c6cd550ba201117e1f838de087695b50"
 
       def install
         bin.install "axm-linux-x64" => "axm"
