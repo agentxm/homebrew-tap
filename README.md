@@ -19,13 +19,19 @@ brew install agentxm/tap/axm
 
 | Formula | Description                                                |
 | ------- | ---------------------------------------------------------- |
-| `axm`   | The official CLI for AgentXM - Agent Experience Management |
+| `axm`   | Open extension manager for AI coding agents                |
 
 ## Updating
 
 ```bash
 brew update
 brew upgrade axm
+```
+
+## Uninstalling
+
+```bash
+brew uninstall axm
 ```
 
 ## Troubleshooting
