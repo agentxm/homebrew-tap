@@ -4,13 +4,13 @@
 class Axm < Formula
   desc "Open extension manager for AI coding agents"
   homepage "https://axm.sh"
-  version "0.24.11"
+  version "0.24.12"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/agentxm/axm/releases/download/cli-v#{version}/axm-darwin-arm64"
-      sha256 "100bcdb4d8e22f350466c1fa6a40e0c2dd4d13a0315ead4ed73e1cd8906d5e95"
+      sha256 "c89586cb77ed65d2a3de9b8ee7c0b87f51c83ac05152d011ae0d4a8ffba2b7c3"
 
       def install
         bin.install "axm-darwin-arm64" => "axm"
@@ -19,7 +19,7 @@ class Axm < Formula
 
     on_intel do
       url "https://github.com/agentxm/axm/releases/download/cli-v#{version}/axm-darwin-x64"
-      sha256 "fcf824b6c2a5988a880a9113142884017df80900091bccbf40dc64101b487b5b"
+      sha256 "02b4cf399a75ceefdfc6342d8d72ffda367e058898b1fbf8ac1e6bffc05fd5be"
 
       def install
         bin.install "axm-darwin-x64" => "axm"
@@ -30,7 +30,7 @@ class Axm < Formula
   on_linux do
     on_arm do
       url "https://github.com/agentxm/axm/releases/download/cli-v#{version}/axm-linux-arm64"
-      sha256 "d59a8ab544f3ee2a52694bff3e0bee2e97c927d3ab8c39913884af78e3014956"
+      sha256 "02e5e7bd8f34e5ffae93ca045b4f2ffe33058c6f2815ba6db1e2b53c5f55c10b"
 
       def install
         bin.install "axm-linux-arm64" => "axm"
@@ -39,7 +39,7 @@ class Axm < Formula
 
     on_intel do
       url "https://github.com/agentxm/axm/releases/download/cli-v#{version}/axm-linux-x64"
-      sha256 "1e0414c9b5ec9d15207bd87dcda704261b6b20daf23a7a43b1a9a04eed32fe78"
+      sha256 "926bd4faf33f31f73d9ee0f5fc7915522131abe14351fc119de57231cac92b91"
 
       def install
         bin.install "axm-linux-x64" => "axm"
