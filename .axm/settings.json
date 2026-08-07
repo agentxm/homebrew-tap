@@ -1,0 +1,15 @@
+{
+  "agents": [
+    "codex",
+    "claude-code"
+  ],
+  "rulesConfig": {
+    "instructions": {
+      "fileName": "AGENTS.md",
+      "gitignoreAliases": true
+    }
+  },
+  "skills": {
+    "axm": "workspace:@agentxm/skills/axm"
+  }
+}
