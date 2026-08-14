@@ -3,7 +3,8 @@ name: axm
 description: |
   AXM - Agent Extension Manager: Use for any operation (install/create/new/edit/update/add/remove/delete/publish/find/discover) on agent skills, subagents, MCP servers, rules, hooks, knowledge bundles, or packs — e.g. "create a skill", "add a subagent", "build an MCP server", or "publish an extension". Use this before hand-authoring or editing any SKILL.md, subagent, MCP, rule, hook, knowledge, or extension manifest file: route extension authoring through AXM instead of writing these files directly.
 metadata:
-  agentxm.ai/cli-version: "0.25.4"
+  axm.sh/cli-version: "0.26.7"
+  axm.sh/cli-version-range: "0.26.7"
 ---
 
 # /axm - Agent Extension Manager
@@ -25,21 +26,26 @@ metadata:
    - User explicitly chose to trust AXM for filesystem mutations.
    - Agent sandbox can write every needed target. Codex: use `--sandbox workspace-write` plus `--add-dir <dir>` for extra roots; `read-only` needs explicit escalation. Claude Code: enable workspace/user-dir write permissions.
    - If trust or permissions are missing, do not run AXM for mutating operations. Tell the user the exact `axm ...` command to run after they configure permissions. Offer to run a CI-style command via an agent prompt only with sufficient consent.
+   - Once the user has requested an eligible mutation, run it directly. `--yes`
+     only preapproves a confirmable semantic risk; it is not a generic mutation
+     gate. Named policy flags such as `--ignore-version-constraints` remain
+     separate and cannot be replaced by
+     `--yes`. Use `--preview` for a no-write candidate and `--non-interactive`
+     when automation must fail deterministically instead of prompting.
 3. **Resolve lint with help topics**: On any `axm lint` finding, read `axm help basic-usage` and the subject topic before acting:
-   - `skill/*` and `workspace/skills-managed` → `axm help skills`
+   - `skill/*` → `axm help skills`
    - `subagent/*` → `axm help subagents`
    - `mcp-server/*` → `axm help mcp-schema`
    - `hook/*` → `axm help hook-schema`
    - `pack/*` → `axm help packs`
    - workspace/config findings → `axm help settings`
-4. **Do not auto-resolve unmanaged extensions**: For `workspace/<plural-type>-managed` findings (e.g., `workspace/skills-managed`), group related unmanaged items, then present adopt/copy/ignore/prune choices with a recommended option using the signals in the topic help.
-5. **Review Git hooks before editing**: For Git-hook setup, read `axm help
+4. **Review Git hooks before editing**: For Git-hook setup, read `axm help
 git-hooks`, inspect the existing hook manager and CI gate, and propose the
    exact diff plus strictness, formatter order, missing-AXM, and bypass policies.
    Get consent before editing shared hook files with normal tools. Preserve
    existing checks, stage only the intended changes, then run `axm lint
---staged` with the chosen strictness.
-6. **Preflight registry identity before publish or install work**: Run
+--view git-index` with the chosen strictness.
+5. **Preflight registry identity before publish or install work**: Run
    `axm whoami --json` before preparing a publish or registry install. Treat exit
    `13` (`auth_required`) as an expected probe result, but propagate every other
    unexpected nonzero exit. Portable wrappers:
@@ -65,6 +71,14 @@ git-hooks`, inspect the existing hook manager and CI gate, and propose the
    process environments. Public extension installs may proceed while signed
    out; the probe only establishes that private registry access is unavailable.
 
+6. **Keep extensions self-contained**: When authoring a non-pack extension, do
+   not require or invoke another extension, reference its files or capabilities,
+   or assume it is installed. Remove the dependency or keep required material
+   inside the extension. Only couple direct sibling members of one pack; set the
+   referencing extension to `standalone: false`, name the shared pack in
+   `recommendedPacks`, and follow `axm help packs`. A recommendation alone does
+   not install the pack or its members.
+
 ### CLI Introspection
 
 Navigate unfamiliar commands with `--help`. Use `axm help` for topic-level guidance (skills, subagents, mcp-schema, rules, hooks, knowledge, packs, settings, exit-codes, etc.).
@@ -87,8 +101,9 @@ registry FQN (`@owner/<plural-type>/<name>[@version]`) and support `--preview`.
 Knowledge bundles stay canonical under `.axm/extensions`; active bundles are
 listed in the managed `Knowledge Base` table in the canonical instruction file.
 Use `knowledgeConfig.instructions: false` only to suppress that table. It does
-not disable install, trust, search, or open behavior; use `axm knowledge disable`
+not disable install, accepted resolution, search, or open behavior; use `axm knowledge disable`
 to retain a bundle without active discovery.
+Read `axm help knowledge` before authoring or revising a Knowledge bundle.
 
 ### Workspace setup & discovery
 
@@ -109,8 +124,8 @@ Rule activation always requires an installed rule name: use `axm rules enable
 <name>` or `axm rules disable <name>`. Global instruction-file ownership is a
 separate capability under `axm rules instructions enable|disable|status`.
 These transitions reconcile the canonical Rules region, every configured alias,
-and the managed `.gitignore` block atomically; resolve reported drift through
-the reviewable `axm lint --fix` plan.
+and the managed `.gitignore` block atomically; preview reported drift with
+`axm sync --preview`, then reconcile it with `axm sync`.
 
 ### Creating & publishing extensions
 
@@ -122,63 +137,68 @@ the reviewable `axm lint --fix` plan.
 | Explicitly return authorship to a source  | `axm demote <fqn> <source>`               |
 | Add an extension to a pack                | `axm packs add <pack> <extension>`        |
 | Remove an extension from a pack           | `axm packs remove <pack> <extension>`     |
-| Inspect desired and resolved pack state   | `axm packs show <pack>`                   |
-| Preview authored-pack trust recovery      | `axm packs repair <pack> --preview`       |
+| Inspect desired Pack state                | `axm packs show <pack>`                   |
 | Unpack a pack into individual entries     | `axm packs unpack <pack>`                 |
-| Publish all authored workspace extensions | `axm publish [--on-existing verify]`      |
-| Publish selected extensions               | `axm publish <fqn...>`                    |
-| Publish authored extensions of one type   | `axm <type> publish`                      |
+| Publish all authored workspace extensions | `axm publish --yes`                       |
+| Publish selected extensions               | `axm publish <fqn...> --yes`              |
+| Publish authored extensions of one type   | `axm <type> publish --yes`                |
 | Bump a workspace extension's version      | `axm version <fqn> <patch\|minor\|major>` |
 | Set an exact version                      | `axm version <fqn> set <x.y.z>`           |
 
-Publish preflights the complete selection before any upload and stops at the
-first runtime failure. Existing versions fail by default; use
-`--on-existing verify` only for an integrity-equivalent no-op. Use `--backfill`
-only for an unpublished lower SemVer. Unsafe archives cannot be bypassed, and
-`--include-dependencies` / `--include-dependency` are pack-only flags.
+Publish preflights the complete selection before any upload. Bare and
+filter-only bulk selections verify and skip byte-identical published versions;
+integrity drift blocks every upload. Explicit selectors remain strict unless
+`--on-existing verify` is supplied, while `--on-existing error` makes a bulk
+selection strict. Use `--backfill` only for an unpublished lower SemVer. Unsafe
+archives cannot be bypassed, and `--include-dependencies` /
+`--include-dependency` are pack-only flags.
 
 ### Managing installed extensions
 
 | Task                                        | Command                               |
 | ------------------------------------------- | ------------------------------------- |
 | List installed extensions of a type         | `axm <type> list`                     |
+| List all local extension state              | `axm list`                            |
 | Disable / enable an extension (not `packs`) | `axm <type> <disable\|enable> <name>` |
 | Install (omit FQN to reinstall all)         | `axm install [<fqn>]`                 |
 | Uninstall                                   | `axm uninstall <fqn>`                 |
 | Update (omit FQN to update all)             | `axm update [<fqn>]`                  |
-| Show extensions with available updates      | `axm outdated`                        |
+| Show extensions with available updates      | `axm list --outdated`                 |
+| Show deprecated installed extensions        | `axm list --deprecated`               |
 | View published extension metadata           | `axm view <fqn> [version\|versions]`  |
 
 ### Workspace state
 
-| Task                                  | Command                                     |
-| ------------------------------------- | ------------------------------------------- |
-| Reconcile the entire workspace        | `axm sync --preview` then `axm sync`        |
-| Reconcile one root or extension type  | `axm sync <fqn>` / `axm sync --type <type>` |
-| Inspect local reconciliation blockers | `axm status`                                |
-| Lint workspace (read-only)            | `axm lint`                                  |
-| Lint the exact Git index              | `axm lint --staged`                         |
-| Reconcile workspace configuration     | `axm lint --fix`                            |
-| Preview one inline MCP drift repair   | `axm mcps repair <name> --preview`          |
-| Remove unmanaged extension artifacts  | `axm prune`                                 |
+| Task                                 | Command                                     |
+| ------------------------------------ | ------------------------------------------- |
+| Reconcile the entire workspace       | `axm sync --preview` then `axm sync`        |
+| Reconcile one root or extension type | `axm sync <fqn>` / `axm sync --type <type>` |
+| Lint workspace (read-only)           | `axm lint`                                  |
+| Lint the exact Git index             | `axm lint --view git-index`                 |
+| Normalize workspace configuration    | `axm lint --fix`                            |
 
 For workspace-authored pack edits, use `axm packs add`, `remove`, or `version`
-when possible. If direct metadata or dependency edits produce trust drift,
-inspect with `axm packs repair <pack> --preview`; accept only after reviewing
-the classified changes. Configured workspace members satisfy pack dependencies
-before Registry lookup, and `packs add` records a caret constraint by default.
+when possible. The authored manifest is desired authority immediately; use
+`axm sync --preview` to review the resulting reconciliation. Configured
+workspace members satisfy pack dependencies before Registry lookup, and
+`packs add` records a caret constraint by default.
 
 Pack install, update, enable/disable, uninstall, and unpack operate on one pack
 and its complete member graph atomically. Use `--preview` to inspect the exact
 canonical sources created, updated, or removed. A failed member or unmet
 postcondition rolls back the whole graph. Unpack promotes member provenance to
 direct settings before removing the pack; no bypass flag is required or
-supported. Reinstall options never accept authored-pack trust drift—use the
-explicit `packs repair` review flow.
+supported.
 
 Use disable when an installed extension should remain managed but inactive.
 Uninstall removes canonical source and managed artifacts once no declaration or
 pack still reaches them.
+
+Treat `.axm/settings.json` and workspace-authored pack manifests as desired
+state. `.axm/axm-lock.yaml` is accepted immutable external resolution, not
+desired intent or command history. Never reconstruct declarations from lock
+rows or observed files. Use `axm lint` for facts, `axm lint --fix` only for
+meaning-preserving normalization, and `axm sync` for reconciliation.
 
 ### Auth
 
