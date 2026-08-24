@@ -4,6 +4,10 @@
     "codex",
     "claude-code"
   ],
+  "minimumReleaseAgeExclude": [
+    "@agentxm/*",
+    "@craigsmitham/*"
+  ],
   "instructionFiles": {
     "fileName": "AGENTS.md",
     "gitignoreAliases": true
