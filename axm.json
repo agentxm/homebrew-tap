@@ -13,6 +13,6 @@
     "gitignoreAliases": true
   },
   "skills": {
-    "axm": "@agentxm/skills/axm"
+    "axm": "agentxm:@agentxm/skills/axm"
   }
 }
