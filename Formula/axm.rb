@@ -4,13 +4,13 @@
 class Axm < Formula
   desc "Open extension manager for AI coding agents"
   homepage "https://axm.sh"
-  version "0.28.9"
+  version "0.28.10"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.9/axm-darwin-arm64"
-      sha256 "d92a5e37c940bae66099ffe3c16e6d61f57a496bf798d3a3c27f8a7327a9b79e"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.10/axm-darwin-arm64"
+      sha256 "450a6a2a977e78ceaf729e4eb06d996a91f0d54325d169aab21f0d1993ddb5b5"
 
       def install
         bin.install "axm-darwin-arm64" => "axm"
@@ -18,8 +18,8 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.9/axm-darwin-x64"
-      sha256 "d2f1c0283596f22d36851e540e25f884c7deaac44232a8ec5f7427b1400ad6af"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.10/axm-darwin-x64"
+      sha256 "3d0106c11da98aab3cf459c6273e6b300f7e52237bd5cf9d9167f5de24f39989"
 
       def install
         bin.install "axm-darwin-x64" => "axm"
@@ -29,8 +29,8 @@ class Axm < Formula
 
   on_linux do
     on_arm do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.9/axm-linux-arm64"
-      sha256 "fd047d711bfd5fed58fe9516862c45b638ddbd0604df782b40df042fb3737e67"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.10/axm-linux-arm64"
+      sha256 "ec97aa5e33770fb9fe8538c7cf6d8fb80cc8bc78c09fe7d7123afa3eb3fcd441"
 
       def install
         bin.install "axm-linux-arm64" => "axm"
@@ -38,8 +38,8 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.9/axm-linux-x64"
-      sha256 "0b6380b9221be002d661e9aa3fb17699f791c3bf63493708e201173f525d6918"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.28.10/axm-linux-x64"
+      sha256 "e94bae63018cffe676630433b4935dfd5a21290e02a6edac862cc81b63e86cea"
 
       def install
         bin.install "axm-linux-x64" => "axm"
