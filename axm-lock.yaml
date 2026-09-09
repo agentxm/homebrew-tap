@@ -1,4 +1,4 @@
-lockfileVersion: 6
+lockfileVersion: 7
 skills:
   axm:
     type: registry
@@ -9,8 +9,8 @@ skills:
     packageFormat: agentxm
     owner: "@agentxm"
     name: axm
-    resolvedVersion: 0.28.1
-    integrity: sha512-Zqxtj4U8WGGZ6aKAcZ77K6JICbwVSLfqym3CoUL1Ygxzze8bdaIbaLG2Fbv1seqNb9uKGZ/LCHexNVqoXWWccQ==
+    resolvedVersion: 0.28.12
+    integrity: sha512-BMFv2eIRyCAaD2QzOyvFEzNw778nsYq0p37YJeBHsALyV6PKzSiFHhbcktSb6CoznSyPALvbV2rb3LyS76P33Q==
     sourceName: agentxm
     publisherBindingId: hbnd_01ks5vvdf0efz9m4w5qsv4q5qp
-    treeIntegrity: sha256-tree-v1:10bcaa35d8d554da2930c4e4978a5d9608dbef5ae84d2297aeb03c684e5ba257
+    treeIntegrity: sha256-tree-v1:3dcf402c6a7c28115138c9ce4c327de402e760327e16de3b1cf99ee5fe3ac52f
