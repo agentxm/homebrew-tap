@@ -4,13 +4,13 @@
 class Axm < Formula
   desc "Open extension manager for AI coding agents"
   homepage "https://axm.sh"
-  version "0.33.1"
+  version "0.34.0"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.33.1/axm-darwin-arm64"
-      sha256 "7f4b3e059e0c761e05377b89912f47f50924226e1309047790d0c731781928eb"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.34.0/axm-darwin-arm64"
+      sha256 "1c53f55a1c26f063adae1815fa102418de01bcfb1171f0127b6386d4d6930b70"
 
       def install
         bin.install "axm-darwin-arm64" => "axm"
@@ -18,8 +18,8 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.33.1/axm-darwin-x64"
-      sha256 "1e847ceacf77170ce67c5c40bc46d24e281e94cb5df49ad1c82b43b68f3dffef"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.34.0/axm-darwin-x64"
+      sha256 "6a3e1231f8886bac72c23200dc6e98e2a9b9418be491db1b036ae00a28bcacca"
 
       def install
         bin.install "axm-darwin-x64" => "axm"
@@ -29,8 +29,8 @@ class Axm < Formula
 
   on_linux do
     on_arm do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.33.1/axm-linux-arm64"
-      sha256 "1fcfcf04fdf69c90dd71906cd2a180e65ccef67bda57880bd58b0851e67c5b32"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.34.0/axm-linux-arm64"
+      sha256 "edfac210cc782750d7f5f199f53fe4048b6a0a37233074ae2118ce2d2700eb84"
 
       def install
         bin.install "axm-linux-arm64" => "axm"
@@ -38,8 +38,8 @@ class Axm < Formula
     end
 
     on_intel do
-      url "https://github.com/agentxm/axm/releases/download/cli-v0.33.1/axm-linux-x64"
-      sha256 "85743fab57a68ebc61198f8abf1f5d46b937f70b3af0b1b4b876a19b15e9c56e"
+      url "https://github.com/agentxm/axm/releases/download/cli-v0.34.0/axm-linux-x64"
+      sha256 "a3fdf1dc6ff0f69038e0ea7ff66b1f248b6f3ad2a868267d367c1d4f0367fcca"
 
       def install
         bin.install "axm-linux-x64" => "axm"
