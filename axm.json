@@ -13,6 +13,9 @@
     "gitignoreAliases": true
   },
   "skills": {
-    "axm": "agentxm:@agentxm/skills/axm"
+    "axm": {
+      "source": "workspace",
+      "origin": "bundled"
+    }
   }
 }

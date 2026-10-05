@@ -5,11 +5,11 @@ description: >-
   distribution, and lifecycle. Use for
   discover, find, inspect, create, scaffold, import, fork, adopt, install, add,
   configure, edit, update, upgrade, enable, disable, sync, lint, validate,
-  package, bundle, version, publish, deprecate, yank, uninstall, remove, or
+  package, bundle, version, publish, archive, unarchive, deprecate, yank,
+  uninstall, remove, or
   delete of skills or SKILL.md; subagents or agent definitions; MCP
   server configurations or connections; rules or instructions; hooks;
-  Knowledge bundles; or packs—even when AXM is not named. Examples: create a
-  skill; add a subagent. Activate before
+  Knowledge bundles; or packs—even when AXM is not named. Activate before
   changing managed content to resolve source and ownership. Workspace setup
   and projection-only repair are
   AXM state work, not instruction authoring; agent definitions are not Agent
@@ -19,8 +19,8 @@ description: >-
   for merely using an installed extension.
 license: FSL-1.1-MIT; https://github.com/agentxm/axm/blob/main/LICENSE
 metadata:
-  axm.sh/cli-version: "0.28.12"
-  axm.sh/cli-version-range: ">=0.28.0 <0.29.0"
+  axm.sh/cli-version: "0.39.0"
+  axm.sh/cli-version-range: ">=0.39.0 <0.40.0"
 ---
 
 # AXM
@@ -115,8 +115,10 @@ the applicable authoring workflow. User scope has no authored roots and does
 not accept user-authored `workspace` sources; the bundled AXM skill is an
 internal static package. For an acquired package, preserve its accepted
 publisher identity and treat local drift under the scope's
-`agent_extensions/<source>/<source-full-name>` root as evidence to resolve,
-not permission to overwrite.
+`agent_extensions/<source-family>/<owner>/<plural-type>/<name>` root as
+evidence to resolve, not permission to overwrite. Registry, Git, and local-path
+packages use the `registry`, `git`, and `path` source families respectively;
+packages without a declared owner use `@portable`.
 When a projection is named as the desired permanent source, identify it as
 non-authoritative, resolve the canonical package first, make semantic changes
 there, then verify the projection from AXM state.
@@ -130,6 +132,29 @@ a reviewed publish-all decision. AXM assigns no special packaging behavior to
 them. Use `axm help publish` and inspect `axm publish --preview --json` before
 authorizing upload; unmatched patterns warn, and the filtered package must
 remain type-valid.
+
+## Subagent implementations
+
+Resolve the authored package before changing a subagent and read `axm help
+subagents` for its current contract. Keep portable instructions in `core` and
+runtime-specific behavior in `implementations.<catalog-id>`. A `customized`
+implementation uses its core with native configuration and optional appended or
+replacement instructions. A `native` implementation is a complete definition;
+its native identity and bytes remain independent of the package identity.
+Never use `agentOverrides` or create a role Skill as a subagent fallback.
+
+Preview a selected runtime with `axm subagents show <name> --render <agent-id>`;
+this is read-only even for an unconfigured runtime. Inspect unsupported outcomes
+as well as rendered content. Mixed support may apply compatible native targets;
+zero compatible configured targets refuses enabled installation or activation.
+Do not invent shared model, tool, permission, or sandbox defaults across hosts.
+
+For native import, specify `--source-agent` when location does not unambiguously
+identify the runtime. Use `--preview` to inspect the proposed package and native
+destinations. Import defaults to disabled and may fill an empty slot in an
+existing authored package while preserving its core, version, other slots,
+activation, and source bytes. Occupied slots and ownership conflicts are
+refusals. Fork an acquired package before customizing it.
 
 ## Bound authority before acting
 
@@ -148,7 +173,7 @@ request and host:
   configure, edit, enable, disable, sync, uninstall, remove, or delete only the
   resolved scope and exact target. Preview when the candidate or ownership is
   uncertain. A vague cleanup request does not authorize guessed deletions.
-- **Registry mutation:** publish, deprecate, yank, or token revocation only
+- **Registry mutation:** publish, archive, unarchive, deprecate, yank, or token revocation only
   when the request explicitly authorizes that operation and target. Never
   expand a selected mutation into bulk publication. Even when local state
   blocks execution, show the bounded future plan: full candidate preflight,
@@ -160,6 +185,10 @@ request and host:
 - **Credential operation:** login or token management only when required and
   authorized. Keep secrets symbolic; never print, request in chat, place in a
   command, persist in extension files, or expose through telemetry.
+- **CI publishing:** in GitHub Actions, prefer trusted publishing over a stored
+  token: grant the job `permissions: id-token: write` and register the
+  repository and workflow as a trusted publisher in AgentXM settings. Set
+  `AXM_TRUSTED_PUBLISHING=0` only for a job that must not use it.
 - **Executable upgrade:** `axm upgrade` changes installed executable state and
   requires explicit upgrade authority. Keep it separate from workspace repair.
 
@@ -177,6 +206,45 @@ credential, registry, or executable authority. Respect host permissions; when
 they prevent a mutation, report the exact blocked target and recovery instead
 of claiming success. Do not retry a failed Registry mutation unless live help
 and the result explicitly establish a safe retry.
+
+## Doctor mode
+
+Enter when invoked as `doctor` or asked to check, diagnose, or health-check AXM
+workspace state. Diagnosis is a local read and authorizes no repair.
+
+1. Preflight `axm`. When it is missing, report `Could not diagnose` with the
+   install route only.
+2. Agents read the user scope and the invoked folder together; diagnose both,
+   user first. Run `axm lint --scope user --json`. Unless the working
+   directory is `$HOME`, run `axm lint --json`; when the directory lacks
+   `axm.json` and `git rev-parse --show-toplevel` has one, add `-C <toplevel>`.
+   A `workspace/initialized` finding means that scope is not set up.
+3. For each set-up scope, run `axm sync --preview --fail-on-change --json` and
+   `axm list --json` with its `--scope`; classify findings by lint rule ID and
+   inventory by `management`. Read `git status` for recoverability and
+   `git grep -n` for references to each removal candidate. Add read-only checks
+   live help offers.
+4. Unless asked to stay offline, check currency against configured sources
+   only: `axm upgrade --preview --json`, then `axm list --outdated --json` and
+   `axm list --deprecated --json` for each set-up scope, and
+   `axm view <fqn> --json` for a replacement named only in a deprecation note.
+   Never authenticate for these. Report an offline request, unreachable source,
+   or timeout as skipped, not failed.
+   For a directly installed deprecated extension, report its reason and any
+   disclosed replacement. Suggest `axm migrate <fqn> --dry-run` for `obsolete`
+   or `superseded` with an available replacement; apply `axm migrate <fqn>`
+   only when repair was selected. For `superseded` with an unavailable or
+   concealed replacement, explain why migration cannot proceed. For
+   `unmaintained` or `other`, explain that the user must choose a successor.
+   A Pack member requires its publisher to update the dependency.
+5. Render [the doctor report](references/doctor-report.md) exactly, then stop
+   at its choice. Only a selected option or named IDs authorize repair;
+   free text becomes a plan to approve.
+6. Apply exactly the selected IDs in the report's dependency order, re-run the
+   checks, and render the post-repair report with the same IDs.
+
+Never hand-delete installed or projected content; converge it with `axm sync`.
+Never delete authored content without an explicitly selected option.
 
 ## Execute and verify
 
